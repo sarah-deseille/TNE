@@ -70,9 +70,12 @@ function create_gallery {
     local NEXT_URL="" #url de la prochaine gallerie
     local PREVIOUS_URL="" #url de la gallerie précédente
     local HTML_PICTURE_LIST=""
+    local SIZE_HEIGHT=$(expr $PICTURE_SIZE + 50)
+    local SIZE_WIDTH=$(expr $PICTURE_SIZE + 20)
     #créer une chaîne qui contient les balises HTML image dans la limite de la taille de la galerie
     for picture in $PICTURE_LIST; do
-        HTML_PICTURE_LIST="$HTML_PICTURE_LIST <img src=\"$picture\" width=\"$PICTURE_SIZE\">"
+        local PICTURE_NAME=$(basename $picture) #récupère le nom du fichier - basename : récupère le nom du fichier
+        HTML_PICTURE_LIST="$HTML_PICTURE_LIST <div><img src=\"$picture\" width=\"$PICTURE_SIZE\"><div>$PICTURE_NAME</div></div>" 
     done 
     #tests s'il n'y a pas de gallerie précédente ou suivante
     if [ $CURRENT_INDEX -eq 1 ]; then #si c'est la première gallerie
@@ -93,11 +96,34 @@ function create_gallery {
 <!DOCTYPE html>
 <html>
 <head>
-<a href="$PREVIOUS_URL">GALERIE $PREVIOUS_INDEX</a>
-<a href="$NEXT_URL">GALERIE $NEXT_INDEX</a>
+<style>
+body > div {
+    border: 1px solid black;
+    float: left;
+    height: ${SIZE_HEIGHT}px;
+    width: ${SIZE_WIDTH}px;
+    margin: 10px;
+    position: relative;
+}
+div > div {
+  background-color: lightgray;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+}
+</style>
 <title>Ma galerie</title>
 </head>
 <body>
+<p>
+<a href="$PREVIOUS_URL">GALERIE $PREVIOUS_INDEX</a>
+<a href="#">GALERIE $CURRENT_INDEX</a> <!--permet de situer la galerie pointée-->
+<a href="$NEXT_URL">GALERIE $NEXT_INDEX</a>
+</p>
 $HTML_PICTURE_LIST <!--affichage des images-->
 </body>
 </html>
